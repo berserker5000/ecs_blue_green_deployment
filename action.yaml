@@ -1,0 +1,34 @@
+name: 'ECS/EC2 Blue/green deployment'
+description: 'Restart ECS tasks, create new EC2 and create blue/green deployment for RDS with backups.'
+inputs:
+  ACCESS_KEY_ID:
+    description: 'AWS access_key_id. Should be specified only when PROFILE_NAME is not specified.'
+    required: false
+  SECRET_ACCESS_KEY:
+    required: false
+    description: 'AWS secret_access_key. Should be specified only when PROFILE_NAME is not specified.'
+  REGION_NAME:
+    description: 'Name of the region to be used to connect to the AWS.'
+    required: false
+    default: 'us-east-1'
+  PROFILE_NAME:
+    required: false
+    description: 'The name of AWS profile to authorise with. Should be specified only when ACCESS_KEY_ID and SECRET_ACCESS_KEY are not specified.'
+  APPLICATION_TAGS:
+    description: '''
+    Tags in AWS for your application. All resources should have the same tags. Tags should be provided in dictionary format.
+    For example: {"Application":"app_name","Environment":"prod","Client":"your_client_name"}.
+    The more tags, the more precisely resources would be picked
+    '''
+    required: false
+    default: 'default'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.ACCESS_KEY_ID }}
+    - ${{ inputs.SECRET_ACCESS_KEY }}
+    - ${{ inputs.REGION_NAME }}
+    - ${{ inputs.PROFILE_NAME }}
+    - ${{ inputs.APPLICATION_TAGS }}
