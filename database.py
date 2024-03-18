@@ -80,7 +80,7 @@ def create_rds_snapshot(client, rds_arn: str):
 		print("Creating manual snapshot of RDS.")
 		client.create_db_snapshot(DBSnapshotIdentifier=snapshot_name, DBInstanceIdentifier=rds_arn.split(":")[-1])
 		waiter = client.get_waiter('db_snapshot_available')
-		waiter.wait(DBInstanceIdentifier=rds_arn.split(":")[-1], DBSnapshotIdentifier=snapshot_name, )
+		waiter.wait(DBInstanceIdentifier=rds_arn.split(":")[-1], DBSnapshotIdentifier=snapshot_name)
 		return True
 	except Exception as e:
 		print("During rds snapshot process an exception occurred.", e)
