@@ -1,5 +1,5 @@
 import os
-
+import json
 import boto3
 
 import autoscaling_ec2
@@ -16,7 +16,7 @@ if tags is None:
 	print("You haven't specify any tags of your application to operate on. Buy.")
 	exit(1)
 else:
-	tags = dict(tags)
+	tags = json.loads(tags)
 
 if access_key_id is not None and secret_access_key is not None:
 	session = boto3.Session(aws_access_key_id=access_key_id, region_name=region_name,
