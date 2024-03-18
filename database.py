@@ -73,14 +73,15 @@ def rds_switchover(client, deployment_id: str):
 	return True
 
 
-def create_rds_snapshot(client, rds_arn: str):
+def create_rds_snapshot(client, rds_arn: str) -> bool:
 	import datetime
 	snapshot_name = rds_arn.split(":")[-1] + "-snapshot-" + str(datetime.datetime.now().strftime("%m-%d-%Y"))
 	try:
 		print("Creating manual snapshot of RDS.")
 		client.create_db_snapshot(DBSnapshotIdentifier=snapshot_name, DBInstanceIdentifier=rds_arn.split(":")[-1])
 		waiter = client.get_waiter('db_snapshot_available')
-		waiter.wait(DBInstanceIdentifier=rds_arn.split(":")[-1], DBSnapshotIdentifier=snapshot_name)
+		while waiter.wait(DBInstanceIdentifier=rds_arn.split(":")[-1], DBSnapshotIdentifier=snapshot_name):
+			print("Still creating snapshot.")
 		return True
 	except Exception as e:
 		print("During rds snapshot process an exception occurred.", e)

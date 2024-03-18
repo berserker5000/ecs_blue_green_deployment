@@ -1,3 +1,6 @@
+import time
+
+
 def get_asg_by_tg(tags: dict, client) -> list:
 	asg_names = []
 	paginator = client.get_paginator('describe_auto_scaling_groups')
@@ -48,6 +51,7 @@ def terminate_old_ec2(ec2_ids_to_terminate: list, client):
 
 
 def disable_scale_in_protection(client, asg_name: str):
+	time.sleep(10)
 	print("Disabling scale in protection from new instances.")
 	asg_description = client.describe_auto_scaling_groups(AutoScalingGroupNames=[asg_name])
 	instance_ids = []
