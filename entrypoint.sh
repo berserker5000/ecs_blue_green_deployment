@@ -1,2 +1,2 @@
-#!/bin/sh -l
-python /tmp/main.py >/dev/null 2>&1
+#!/bin/sh
+python -u /tmp/main.py
