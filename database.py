@@ -106,7 +106,7 @@ def delete_rds_and_deployment(client, deployment_id: str, rds_arn: str):
 		status = description["BlueGreenDeployments"][0]["Status"]
 		while status != "SWITCHOVER_COMPLETED":
 			print(f"Checking for switchover is finished. Status: {status}")
-			time.sleep(10)
+			time.sleep(20)
 			description = client.describe_blue_green_deployments(BlueGreenDeploymentIdentifier=deployment_id)
 			status = description["BlueGreenDeployments"][0]["Status"]
 		print(f"Deleting deployment {deployment_id}")
