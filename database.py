@@ -56,9 +56,11 @@ def rds_switchover(client, deployment_id: str):
 	target_status = client.describe_db_instances(DBInstanceIdentifier=status["target_arn"])["DBInstances"][0][
 		"DBInstanceStatus"]
 	while target_status != "available":
+		print(f"Target instance is still in {target_status} status")
 		status = get_bg_status(client=client, deployment_id=deployment_id)
 		target_status = client.describe_db_instances(DBInstanceIdentifier=status["target_arn"])["DBInstances"][0][
 			"DBInstanceStatus"]
+		time.sleep(30)
 
 	print("Starting blue/green deployment switchover.")
 	client.switchover_blue_green_deployment(
@@ -66,6 +68,7 @@ def rds_switchover(client, deployment_id: str):
 		SwitchoverTimeout=900
 	)
 	while status["deployment_status"] != "SWITCHOVER_COMPLETED" and status["replica_status"] != "available":
+		time.sleep(30)
 		print("Status:", status)
 		print("Switchover is still in progress.")
 		status = get_bg_status(client=client, deployment_id=deployment_id)
@@ -80,15 +83,17 @@ def create_rds_snapshot(client, rds_arn: str) -> bool:
 	response = client.describe_db_instances(DBInstanceIdentifier=rds_arn.split(":")[-1])
 	status = response['DBInstances'][0]['DBInstanceStatus']
 	while status != "Available":
+		time.sleep(30)
 		print(f"RDS is not in Available status yet. Status is: {status}")
+		response = client.describe_db_instances(DBInstanceIdentifier=rds_arn.split(":")[-1])
 		status = response['DBInstances'][0]['DBInstanceStatus']
-		time.sleep(10)
 	try:
 		print("Creating manual snapshot of RDS.")
 		client.create_db_snapshot(DBSnapshotIdentifier=snapshot_name, DBInstanceIdentifier=rds_arn.split(":")[-1])
 		waiter = client.get_waiter('db_snapshot_available')
 		while waiter.wait(DBInstanceIdentifier=rds_arn.split(":")[-1], DBSnapshotIdentifier=snapshot_name):
 			print("Still creating snapshot.")
+			time.sleep(30)
 		return True
 	except Exception as e:
 		print("During rds snapshot process an exception occurred.", e)
