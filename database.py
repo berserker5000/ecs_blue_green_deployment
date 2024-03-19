@@ -82,7 +82,7 @@ def create_rds_snapshot(client, rds_arn: str) -> bool:
 
 	response = client.describe_db_instances(DBInstanceIdentifier=rds_arn.split(":")[-1])
 	status = response['DBInstances'][0]['DBInstanceStatus']
-	while status != "Available":
+	while status != "available":
 		time.sleep(30)
 		print(f"RDS is not in Available status yet. Status is: {status}")
 		response = client.describe_db_instances(DBInstanceIdentifier=rds_arn.split(":")[-1])
