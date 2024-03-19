@@ -73,9 +73,9 @@ def scale_down_ecs_tasks(client, tags: dict):
 			                                                      list_of_services_arns=services_with_keyword)
 			# Scale tasks
 			for service_arn, task_count in task_count_per_service.items():
-				print(f"Scaling {service_arn} to {task_count / 2}")
+				print(f"Scaling {service_arn} to {int(task_count / 2)}")
 				update_service_task_count(client=client, cluster_arn=cluster_arn, service_arn=service_arn,
-				                          desired_count=task_count / 2, wait=False)
+				                          desired_count=int(task_count / 2), wait=False)
 
 		else:
 			print(f"No services for the application {tags['Application']} was found.")
