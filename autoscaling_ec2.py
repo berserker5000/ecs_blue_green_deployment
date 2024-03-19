@@ -58,8 +58,10 @@ def disable_scale_in_protection(client, asg_name: str):
 	for i in asg_description['AutoScalingGroups']:
 		for k in i['Instances']:
 			instance_ids.append(k['InstanceId'])
-	client.set_instance_protection(
+	resp = client.set_instance_protection(
 		InstanceIds=instance_ids,
 		AutoScalingGroupName=asg_name,
 		ProtectedFromScaleIn=False
 	)
+	print(f"Instances to disable scale-in:{instance_ids}")
+	print(f"Method response:{resp}")
