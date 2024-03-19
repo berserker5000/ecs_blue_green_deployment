@@ -48,7 +48,7 @@ def main():
 		                          scale_in_protection_enabled=True)
 
 	# Scale in
-	ecs.scale_ecs_tasks(client=ecs_client, tags=tags, multiplier=2)
+	ecs.scale_up_ecs_tasks(client=ecs_client, tags=tags)
 	# bg deployment for RDS
 	deployment_id = database.rds_bg(client=rds_client, rds_arn=rds_data["arn"], rds_name=rds_data["name"])
 	# switch RDS
@@ -68,7 +68,7 @@ def main():
 		autoscaling_ec2.disable_scale_in_protection(client=asg_client, asg_name=asg)
 
 	# Scale down
-	ecs.scale_ecs_tasks(client=ecs_client, tags=tags, multiplier=0.5, wait=False)
+	ecs.scale_down_ecs_tasks(client=ecs_client, tags=tags)
 
 	if switchover_is_done:
 		deployment_data = database.get_bg_status(client=rds_client, deployment_id=deployment_id, sleep_timer=0)

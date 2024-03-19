@@ -43,7 +43,7 @@ def update_service_task_count(client, cluster_arn: str, service_arn: str, desire
 		return False
 
 
-def scale_ecs_tasks(client, tags: dict, multiplier, wait: bool = True):
+def scale_up_ecs_tasks(client, tags: dict):
 	cluster_arn = get_ecs_cluster(client=client, tags=tags)
 
 	if cluster_arn:
@@ -54,11 +54,28 @@ def scale_ecs_tasks(client, tags: dict, multiplier, wait: bool = True):
 			                                                      list_of_services_arns=services_with_keyword)
 			# Scale tasks
 			for service_arn, task_count in task_count_per_service.items():
-				desired_count = task_count * multiplier
-				desired_count = int(desired_count)
-				print(f"Scaling {service_arn} to {desired_count}")
+				print(f"Scaling {service_arn} to {task_count * 2}")
 				update_service_task_count(client=client, cluster_arn=cluster_arn, service_arn=service_arn,
-				                          desired_count=desired_count, wait=wait)
+				                          desired_count=task_count * 2, wait=True)
+
+		else:
+			print(f"No services for the application {tags['Application']} was found.")
+
+
+def scale_down_ecs_tasks(client, tags: dict):
+	cluster_arn = get_ecs_cluster(client=client, tags=tags)
+
+	if cluster_arn:
+		services_with_keyword = get_services_in_cluster(cluster_arn=cluster_arn, client=client,
+		                                                search_word=tags["Application"])
+		if services_with_keyword:
+			task_count_per_service = find_task_count_for_services(client=client, cluster_arn=cluster_arn,
+			                                                      list_of_services_arns=services_with_keyword)
+			# Scale tasks
+			for service_arn, task_count in task_count_per_service.items():
+				print(f"Scaling {service_arn} to {task_count / 2}")
+				update_service_task_count(client=client, cluster_arn=cluster_arn, service_arn=service_arn,
+				                          desired_count=task_count / 2, wait=False)
 
 		else:
 			print(f"No services for the application {tags['Application']} was found.")
