@@ -32,7 +32,7 @@ def find_task_count_for_services(client, cluster_arn: str, list_of_services_arns
 def update_service_task_count(client, cluster_arn: str, service_arn: str, desired_count: int, wait: bool = True):
 	try:
 		client.update_service(cluster=cluster_arn, service=service_arn, desiredCount=desired_count,
-		                      forceNewDeployment=True, deploymentConfiguration={"maximumPercent": 101 * desired_count})
+		                      forceNewDeployment=True)
 		if wait:
 			waiter = client.get_waiter('services_stable')
 			waiter.wait(cluster=cluster_arn, services=[service_arn])
