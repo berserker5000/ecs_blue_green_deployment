@@ -61,10 +61,10 @@ def main():
 		old_ids = autoscaling_ec2.get_old_ec2_ids(asg_name=asg, asg_client=asg_client)
 		# getting number of EC2 in ASG
 		capacity = autoscaling_ec2.get_asg_capacity(asg_name=asg, client=asg_client)
-		# scaling x1 for ec2 instance
-		autoscaling_ec2.scale_asg(asg_name=asg, capacity=capacity / 2, client=asg_client)
 		# terminate old EC2
 		autoscaling_ec2.terminate_old_ec2(client=ec2_client, ec2_ids_to_terminate=old_ids)
+		# scaling x1 for ec2 instance
+		autoscaling_ec2.scale_asg(asg_name=asg, capacity=capacity / 2, client=asg_client)
 		autoscaling_ec2.disable_scale_in_protection(client=asg_client, asg_name=asg)
 
 	# Scale down
