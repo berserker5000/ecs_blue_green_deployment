@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 import boto3
 
@@ -51,6 +52,7 @@ def main():
 	# bg deployment for RDS
 	deployment_id = database.rds_bg(client=rds_client, rds_arn=rds_data["arn"], rds_name=rds_data["name"])
 	# switch RDS
+	time.sleep(60)
 	switchover_is_done = database.rds_switchover(client=rds_client, deployment_id=deployment_id)
 
 	# --- SCALE DOWN ---
