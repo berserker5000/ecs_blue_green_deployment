@@ -24,15 +24,17 @@ def find_task_count_for_services(client, cluster_arn: str, list_of_services_arns
 	number_of_tasks = {}
 	for service_arn in list_of_services_arns:
 		service_info = client.describe_services(cluster=cluster_arn, services=[service_arn])['services'][0]
-		task_count = service_info.get('runningCount', 0)
+		task_count = service_info.get('runningCount')
+		print(f"Current tasks for {service_arn} in running state: {task_count}")
 		number_of_tasks[service_arn] = task_count
 	return number_of_tasks
 
 
-def update_service_task_count(client, cluster_arn: str, service_arn: str, desired_count: int, wait: bool = True):
+def update_service_task_count(client, cluster_arn: str, service_arn: str, desired_count: int, wait: bool = True,
+                              force: bool = False):
 	try:
 		client.update_service(cluster=cluster_arn, service=service_arn, desiredCount=desired_count,
-		                      forceNewDeployment=False)
+		                      forceNewDeployment=force)
 		if wait:
 			waiter = client.get_waiter('services_stable')
 			waiter.wait(cluster=cluster_arn, services=[service_arn])
@@ -45,10 +47,10 @@ def update_service_task_count(client, cluster_arn: str, service_arn: str, desire
 
 def scale_up_ecs_tasks(client, tags: dict):
 	cluster_arn = get_ecs_cluster(client=client, tags=tags)
-
+	first_tag_key = [key for key in tags.values()][0]
 	if cluster_arn:
 		services_with_keyword = get_services_in_cluster(cluster_arn=cluster_arn, client=client,
-		                                                search_word=tags["Application"])
+		                                                search_word=first_tag_key)
 		if services_with_keyword:
 			task_count_per_service = find_task_count_for_services(client=client, cluster_arn=cluster_arn,
 			                                                      list_of_services_arns=services_with_keyword)
@@ -59,23 +61,24 @@ def scale_up_ecs_tasks(client, tags: dict):
 				                          desired_count=task_count * 2, wait=True)
 
 		else:
-			print(f"No services for the application {tags['Application']} was found.")
+			print(f"No services for the application {first_tag_key} was found.")
 
 
 def scale_down_ecs_tasks(client, tags: dict):
 	cluster_arn = get_ecs_cluster(client=client, tags=tags)
-
+	first_tag_key = [key for key in tags.values()][0]
 	if cluster_arn:
 		services_with_keyword = get_services_in_cluster(cluster_arn=cluster_arn, client=client,
-		                                                search_word=tags["Application"])
+		                                                search_word=first_tag_key)
 		if services_with_keyword:
 			task_count_per_service = find_task_count_for_services(client=client, cluster_arn=cluster_arn,
 			                                                      list_of_services_arns=services_with_keyword)
 			# Scale tasks
 			for service_arn, task_count in task_count_per_service.items():
+				print(f"Current task number in service {service_arn}: {task_count}")
 				print(f"Scaling {service_arn} to {int(task_count / 2)}")
 				update_service_task_count(client=client, cluster_arn=cluster_arn, service_arn=service_arn,
-				                          desired_count=int(task_count / 2), wait=False)
+				                          desired_count=int(task_count / 2), wait=False, force=True)
 
 		else:
-			print(f"No services for the application {tags['Application']} was found.")
+			print(f"No services for the application {first_tag_key} was found.")
