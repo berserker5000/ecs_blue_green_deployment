@@ -61,7 +61,7 @@ def scale_up_ecs_tasks(client, tags: dict):
 				                          desired_count=task_count * 2, wait=True)
 
 		else:
-			print(f"No services for the application {first_tag_key} was found.")
+			print(f"No services with tag value {first_tag_key} was found.")
 
 
 def scale_down_ecs_tasks(client, tags: dict):
@@ -81,4 +81,4 @@ def scale_down_ecs_tasks(client, tags: dict):
 				                          desired_count=int(task_count / 2), wait=False, force=True)
 
 		else:
-			print(f"No services for the application {first_tag_key} was found.")
+			print(f"No services tag value {first_tag_key} was found.")
