@@ -53,7 +53,12 @@ def main():
 	deployment_id = database.rds_bg(client=rds_client, rds_arn=rds_data["arn"], rds_name=rds_data["name"])
 	# switch RDS
 	time.sleep(60)
-	switchover_is_done = database.rds_switchover(client=rds_client, deployment_id=deployment_id)
+	try:
+		switchover_is_done = database.rds_switchover(client=rds_client, deployment_id=deployment_id)
+	except Exception:
+		print("Wasn't able to start switchover. Truing again in 60 seconds")
+		time.sleep(60)
+		switchover_is_done = database.rds_switchover(client=rds_client, deployment_id=deployment_id)
 
 	# --- SCALE DOWN ---
 	for asg in autoscaling_groups:
