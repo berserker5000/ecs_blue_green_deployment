@@ -65,10 +65,11 @@ def main():
 		# autoscaling_ec2.terminate_old_ec2(client=ec2_client, ec2_ids_to_terminate=old_ids)
 		# scaling x1 for ec2 instance
 		autoscaling_ec2.scale_asg(asg_name=asg, capacity=int(capacity / 2), client=asg_client)
-		time.sleep(30)
+		time.sleep(60)
 		autoscaling_ec2.disable_scale_in_protection(client=asg_client, asg_name=asg)
 
 	# Scale down
+	time.sleep(60)
 	ecs.scale_down_ecs_tasks(client=ecs_client, tags=tags)
 
 	if switchover_is_done:
