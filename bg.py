@@ -14,6 +14,7 @@ secret_access_key = os.getenv("INPUT_SECRET_ACCESS_KEY") or None
 region_name = os.getenv("INPUT_REGION_NAME") or "us-east-1"
 profile_name = os.getenv("INPUT_PROFILE_NAME") or None
 tags = os.getenv("INPUT_APPLICATION_TAGS") or None
+cf_tags = os.getenv("INPUT_CLOUDFRONT_TAGS") or None
 
 if tags is None:
 	print("You haven't specify any tags of your application to operate on. Buy.")
@@ -87,7 +88,7 @@ def main():
 			print("Snapshot is created, now you can delete an old RDS and deployment.")
 			database.delete_rds_and_deployment(client=rds_client, rds_arn=deployment_data["source_arn"],
 			                                   deployment_id=deployment_id)
-	dist_id = cloudfront.get_cloudfront_distribution(client=cf_client, tags=tags)
+	dist_id = cloudfront.get_cloudfront_distribution(client=cf_client, tags=cf_tags)
 	cloudfront.invalidate_cloudfront(client=cf_client, id_list=dist_id)
 
 

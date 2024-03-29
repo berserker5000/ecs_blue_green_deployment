@@ -20,8 +20,14 @@ inputs:
     For example: {"Application":"app_name","Environment":"prod","Client":"your_client_name"}.
     The more tags, the more precisely resources would be picked
     '''
-    required: false
-    default: 'default'
+    required: true
+  CLOUDFRONT_TAGS:
+    description: '''
+    Tags in AWS for your cloudfront. All resources should have the same tags. Tags should be provided in dictionary format.
+    For example: {"Application":"app_name","Environment":"prod","Client":"your_client_name"}.
+    The more tags, the more precisely resources would be picked
+    '''
+    required: true
 
 runs:
   using: 'docker'
@@ -32,3 +38,4 @@ runs:
     - ${{ inputs.REGION_NAME }}
     - ${{ inputs.PROFILE_NAME }}
     - ${{ inputs.APPLICATION_TAGS }}
+    - ${{ inputs.CLOUDFRONT_TAGS }}
