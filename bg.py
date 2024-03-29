@@ -5,6 +5,7 @@ import time
 import boto3
 
 import autoscaling_ec2
+import cloudfront
 import database
 import ecs
 
@@ -33,6 +34,7 @@ ec2_client = session.client("ec2")
 rds_client = session.client("rds")
 asg_client = session.client("autoscaling")
 ecs_client = session.client("ecs")
+cf_client = session.client("cloudfront")
 
 
 def main():
@@ -85,6 +87,8 @@ def main():
 			print("Snapshot is created, now you can delete an old RDS and deployment.")
 			database.delete_rds_and_deployment(client=rds_client, rds_arn=deployment_data["source_arn"],
 			                                   deployment_id=deployment_id)
+	dist_id = cloudfront.get_cloudfront_distribution(client=cf_client, tags=tags)
+	cloudfront.invalidate_cloudfront(client=cf_client, id_list=dist_id)
 
 
 main()
