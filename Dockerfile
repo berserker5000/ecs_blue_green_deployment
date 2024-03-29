@@ -5,6 +5,7 @@ COPY autoscaling_ec2.py /tmp/
 COPY database.py /tmp/
 COPY ecs.py /tmp/
 COPY bg.py /tmp/main.py
+COPY cloudfront.py /tmp/
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
