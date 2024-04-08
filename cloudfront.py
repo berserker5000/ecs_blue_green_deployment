@@ -5,6 +5,7 @@ def get_cloudfront_distribution(client, tags: dict) -> list:
 	paginator = client.get_paginator('list_distributions')
 	new_cf_tag_dict = {}
 	distribution_data = []
+	print("Getting cloudfront ID to ivalidate")
 	for page in paginator.paginate():
 		# Get list of CloudFront distributions from current page
 		distributions = page['DistributionList'].get('Items', [])
@@ -20,12 +21,14 @@ def get_cloudfront_distribution(client, tags: dict) -> list:
 					new_cf_tag_dict[kv_pair["Key"]] = kv_pair["Value"]
 				if all(tag in new_cf_tag_dict.items() for tag in tags.items()):
 					distribution_data.append(distribution['Id'])
+					print(f"Distribution ID to invalidate is {distribution['Id']}")
 	return distribution_data
 
 
 def invalidate_cloudfront(client, id_list: list):
 	dt = datetime.datetime.utcnow()
 	for id in id_list:
+		print(f"Invalidating cloudfront ID: {id}")
 		response = client.create_invalidation(
 			DistributionId=id,
 			InvalidationBatch={
