@@ -1,8 +1,11 @@
 import datetime
+import json
 
 
-def get_cloudfront_distribution(client, tags: dict) -> list:
+def get_cloudfront_distribution(client, tags) -> list:
 	paginator = client.get_paginator('list_distributions')
+	if type(tags) is "str":
+		tags = json.loads(tags)
 	print(type(tags))
 	new_cf_tag_dict = {}
 	distribution_data = []
