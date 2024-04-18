@@ -4,7 +4,7 @@ import json
 
 def get_cloudfront_distribution(client, tags) -> list:
 	paginator = client.get_paginator('list_distributions')
-	if type(tags) is "str":
+	if isinstance(tags, str):
 		tags = json.loads(tags)
 	print(type(tags))
 	new_cf_tag_dict = {}
