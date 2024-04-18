@@ -88,8 +88,9 @@ def main():
 			print("Snapshot is created, now you can delete an old RDS and deployment.")
 			database.delete_rds_and_deployment(client=rds_client, rds_arn=deployment_data["source_arn"],
 			                                   deployment_id=deployment_id)
-	dist_id = cloudfront.get_cloudfront_distribution(client=cf_client, tags=cf_tags)
-	cloudfront.invalidate_cloudfront(client=cf_client, id_list=dist_id)
 
 
-main()
+dist_id = cloudfront.get_cloudfront_distribution(client=cf_client, tags=cf_tags)
+cloudfront.invalidate_cloudfront(client=cf_client, id_list=dist_id)
+
+# main()
