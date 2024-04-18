@@ -3,6 +3,7 @@ import datetime
 
 def get_cloudfront_distribution(client, tags: dict) -> list:
 	paginator = client.get_paginator('list_distributions')
+	print(type(tags))
 	new_cf_tag_dict = {}
 	distribution_data = []
 	print("Getting cloudfront ID to ivalidate")
