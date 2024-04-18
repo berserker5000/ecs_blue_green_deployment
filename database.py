@@ -112,6 +112,8 @@ def delete_rds_and_deployment(client, deployment_id: str, rds_arn: str):
 		print(f"Deleting deployment {deployment_id}")
 		client.delete_blue_green_deployment(BlueGreenDeploymentIdentifier=deployment_id, DeleteTarget=False)
 		print(f"Deleting rds {rds_arn}")
+		client.modify_db_instance(DBInstanceIdentifier=rds_arn.split(":")[-1], DeletionProtection=False, ApplyImmediately=True)
+		time.sleep(10)
 		client.delete_db_instance(DBInstanceIdentifier=rds_arn.split(":")[-1], SkipFinalSnapshot=True)
 		return True
 	except Exception as e:
