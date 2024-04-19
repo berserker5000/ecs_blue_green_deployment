@@ -6,18 +6,18 @@ def get_cloudfront_distribution(client, tags) -> list:
 	paginator = client.get_paginator('list_distributions')
 	if isinstance(tags, str):
 		tags = json.loads(tags)
-	new_cf_tag_dict = {}
 	distribution_data = []
-	print("Getting cloudfront ID to ivalidate")
+	print("Getting cloudfront ID to invalidate")
 	for page in paginator.paginate():
 		# Get list of CloudFront distributions from current page
 		distributions = page['DistributionList'].get('Items', [])
 
 		# Iterate over distributions to find the one with matching tags
 		for distribution in distributions:
+			new_cf_tag_dict = {}
 			# Get distribution tags
 			distribution_tags = client.list_tags_for_resource(Resource=distribution['ARN'])['Tags'].get('Items', [])
-			if distribution_tags == []:
+			if not distribution_tags:
 				pass
 			else:
 				for kv_pair in distribution_tags:
