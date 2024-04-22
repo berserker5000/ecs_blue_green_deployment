@@ -78,7 +78,7 @@ def rds_switchover(client, deployment_id: str):
 
 def create_rds_snapshot(client, rds_arn: str) -> bool:
 	import datetime
-	snapshot_name = rds_arn.split(":")[-1] + "-snapshot-" + str(datetime.datetime.now().strftime("%m-%d-%Y"))
+	snapshot_name = rds_arn.split(":")[-1] + "-snapshot-" + str(datetime.datetime.now().strftime("%m-%d-%Y-%H-%M-%S"))
 
 	response = client.describe_db_instances(DBInstanceIdentifier=rds_arn.split(":")[-1])
 	status = response['DBInstances'][0]['DBInstanceStatus']
