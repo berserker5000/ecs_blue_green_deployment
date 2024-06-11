@@ -17,7 +17,7 @@ tags = os.getenv("INPUT_APPLICATION_TAGS") or None
 cf_tags = os.getenv("INPUT_CLOUDFRONT_TAGS") or None
 
 if tags is None:
-	print("You haven't specify any tags of your application to operate on. Buy.")
+	print("You haven't specify any tags of your application to operate on. Bye.")
 	exit(1)
 else:
 	tags = json.loads(tags)
@@ -28,7 +28,7 @@ if access_key_id is not None and secret_access_key is not None:
 elif profile_name is not None:
 	session = boto3.Session(profile_name=profile_name, region_name=region_name)
 else:
-	print("You haven't specify nor AK/SK nor profile to be used. Buy.")
+	print("You haven't specify nor AK/SK nor profile to be used. Bye.")
 	exit(1)
 
 ec2_client = session.client("ec2")

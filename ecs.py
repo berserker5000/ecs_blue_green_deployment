@@ -16,7 +16,7 @@ def get_ecs_cluster(client, tags: dict):
 
 def get_services_in_cluster(client, cluster_arn: str, search_word: str):
 	services = client.list_services(cluster=cluster_arn)['serviceArns']
-	filtered_services = [service for service in services if search_word in service]
+	filtered_services = [service for service in services if search_word in service.split("/")[-1]]
 	return filtered_services
 
 
