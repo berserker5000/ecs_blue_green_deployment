@@ -50,8 +50,6 @@ def main():
 		autoscaling_ec2.scale_asg(asg_name=asg, capacity=capacity * 2, client=asg_client,
 		                          scale_in_protection_enabled=True)
 
-	# Scale in
-	ecs.scale_up_ecs_tasks(client=ecs_client, tags=tags)
 	# bg deployment for RDS
 	deployment_id = database.rds_bg(client=rds_client, rds_arn=rds_data["arn"], rds_name=rds_data["name"])
 	# switch RDS
@@ -59,9 +57,12 @@ def main():
 	try:
 		switchover_is_done = database.rds_switchover(client=rds_client, deployment_id=deployment_id)
 	except Exception:
-		print("Wasn't able to start switchover. Truing again in 60 seconds")
+		print("Wasn't able to start switchover. Trying again in 60 seconds")
 		time.sleep(60)
 		switchover_is_done = database.rds_switchover(client=rds_client, deployment_id=deployment_id)
+
+	# Scale in
+	ecs.scale_up_ecs_tasks(client=ecs_client, tags=tags)
 
 	# --- SCALE DOWN ---
 	for asg in autoscaling_groups:
